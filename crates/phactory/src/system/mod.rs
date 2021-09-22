@@ -1,6 +1,7 @@
 pub mod gk;
 mod master_key;
 mod side_tasks;
+mod ip_report_example;
 
 use crate::{
     benchmark,
@@ -15,6 +16,7 @@ use crate::{
     secret_channel::{PeelingReceiver, SecretReceiver},
     types::{BlockInfo, OpaqueError, OpaqueQuery, OpaqueReply},
 };
+
 use anyhow::Result;
 use core::fmt;
 use log::info;
@@ -447,6 +449,7 @@ impl<Platform: pal::Platform> System<Platform> {
                 self.geoip_city_db.clone(),
             );
         }
+        ip_report_example::process_block(block.block_number, &self.egress, block.side_task_man);
         loop {
             let ok = phala_mq::select_ignore_errors! {
                 (event, origin) = self.system_events => {
